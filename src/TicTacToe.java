@@ -78,7 +78,7 @@ public class TicTacToe {
                     validUserMove = true;
                     board[row - 1][col - 1] = player;
                 } else {
-                    System.out.println("\n⚠️ Invalid move. PLease choose an empty square.\n");
+                    System.out.println("\n⚠️ Invalid move. Please choose an empty square.\n");
                 }
             } while (!validUserMove);
 

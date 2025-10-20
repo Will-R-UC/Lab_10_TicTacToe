@@ -286,10 +286,9 @@ public class TicTacToe {
             hasX = false;
             hasO = false;
             for (int rowCol = 0; rowCol < ROWS; rowCol++) {
-                if (!board[rowCol][rowCol].equals("X")) hasX = true;
-                if (!board[rowCol][rowCol].equals("O")) hasO = true;
+                if (board[rowCol][rowCol].equals("X")) hasX = true;
+                if (board[rowCol][rowCol].equals("O")) hasO = true;
             }
-
             if (!hasX || !hasO) return false;
 
             //test top-right to bottom-left

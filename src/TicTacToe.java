@@ -4,16 +4,96 @@ public class TicTacToe {
     private static final int ROWS = 3;
     private static final int COLS = 3;
     private static final String[][] board = new String[ROWS][COLS];
+    private static final Scanner consoleIn = new Scanner(System.in);
 
     public static void main(String[] args) {
-        Scanner consoleIn = new Scanner(System.in);
+        boolean userDone = false;
+        do {
+            initializeGame();
+            //invert response to get whether the user is done - the ! is important
+            userDone = !SafeInput.getYNConfirm(consoleIn, "Play again?");
+        } while(!userDone);
+    }
+
+
+    /*
+    initializeGame() {
+        let player = X
+        let move = 0
+        clearBoard()
+
+        let gameOver = false
+        do {
+            displayBoard()
+
+            let validUserMove = false;
+            do {
+                print("Enter your move ${player}")
+                let row = getRangedInt(1,ROWS)
+                let col = getRangedInt(1,COLS)
+
+                if (isValidMove(row,col)) {
+                    validUserMove = true
+                    board[row - 1][col - 1] = player;
+                } else {
+                    print("Invalid move.")
+                }
+            } while(not validMove)
+
+            if (isWin(player)) {
+                print("Player ${player} wins!")
+                gameOver = true
+            } else if (isTie()) {
+                print("Tie!")
+                gameOver = true
+            }
+
+            move++
+        } while (not gameOver)
+    }
+     */
+
+    private static void initializeGame() {
+        String player = "X";
+        int moveNumber = 0;
         clearBoard();
-        board[0][0] = "O"; board[0][1] = "O"; board[0][2] = "X";
-        board[1][0] = "X"; board[1][1] = "X"; board[1][2] = "O";
-        board[2][0] = "O"; board[2][1] = "X"; board[2][2] = " ";
-        displayBoard();
-        System.out.println("win: " + isWin("X"));
-        System.out.println("tie: " + isTie());
+
+        boolean gameOver = false;
+        do {
+            if (moveNumber % 2 == 0) {
+                player = "X";
+            } else {
+                player = "O";
+            }
+
+            displayBoard();
+
+            boolean validUserMove = false;
+            do {
+                System.out.print(">> Enter your move, player " + player);
+                int row = SafeInput.getRangedInt(consoleIn, "row", 1, ROWS);
+                int col = SafeInput.getRangedInt(consoleIn, "column", 1, COLS);
+
+                if (isValidMove(row, col)) {
+                    validUserMove = true;
+                    board[row - 1][col - 1] = player;
+                } else {
+                    System.out.println("\n⚠️ Invalid move. PLease choose an empty square.\n");
+                }
+            } while (!validUserMove);
+
+            if (isWin(player)) {
+                displayBoard();
+                System.out.println("🎉 Player " + player + " wins!");
+                gameOver = true;
+            } else if (isTie()) {
+                displayBoard();
+                System.out.println("🤝 It's a tie! (There is no chance for either player to win)");
+                gameOver = true;
+            }
+
+            moveNumber++;
+        } while (!gameOver);
     }
 
     private static void clearBoard() {
@@ -89,7 +169,7 @@ public class TicTacToe {
     }
 
     private static boolean isValidMove(int row, int col) {
-        return board[row][col].equals(" ");
+        return board[row - 1][col - 1].equals(" ");
     }
 
     private static boolean isWin(String player) {
@@ -97,6 +177,10 @@ public class TicTacToe {
     }
 
     private static boolean isColWin(String player) {
+        //Note that an efficient approach would only check the column that a
+        //new move was added to for a win, but a naive approach limits the
+        // amount of information passed to these methods
+
         for (int col = 0; col < ROWS; col++) {
             boolean allMatch = true;
             for (int row = 0; row < COLS; row++) {
@@ -196,25 +280,28 @@ public class TicTacToe {
             if (!hasX || !hasO) return false;
         }
 
-        //test top-left to bottom-right
-        hasX = false;
-        hasO = false;
-        for (int rowCol = 0; rowCol < ROWS; rowCol++) {
-            if (!board[rowCol][rowCol].equals("X")) hasX = true;
-            if (!board[rowCol][rowCol].equals("O")) hasO = true;
+        //diagonals
+        if (ROWS == COLS) {
+            //test top-left to bottom-right
+            hasX = false;
+            hasO = false;
+            for (int rowCol = 0; rowCol < ROWS; rowCol++) {
+                if (!board[rowCol][rowCol].equals("X")) hasX = true;
+                if (!board[rowCol][rowCol].equals("O")) hasO = true;
+            }
+
+            if (!hasX || !hasO) return false;
+
+            //test top-right to bottom-left
+            hasX = false;
+            hasO = false;
+            for (int rowCol = ROWS - 1; rowCol >= 0; rowCol--) {
+                if (!board[ROWS - 1 - rowCol][rowCol].equals("X")) hasX = true;
+                if (!board[ROWS - 1 - rowCol][rowCol].equals("O")) hasO = true;
+            }
+
+            if (!hasX || !hasO) return false;
         }
-
-        if (!hasX || !hasO) return false;
-
-        //test top-right to bottom-left
-        hasX = false;
-        hasO = false;
-        for (int rowCol = ROWS - 1; rowCol >= 0; rowCol--) {
-            if (!board[ROWS - 1 - rowCol][rowCol].equals("X")) hasX = true;
-            if (!board[ROWS - 1 - rowCol][rowCol].equals("O")) hasO = true;
-        }
-
-        if (!hasX || !hasO) return false;
 
         //There is a tie - either the board is completely filled and no more moves can be made, or it is impossible to win with any extra moves.
         return true;

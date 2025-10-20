@@ -82,14 +82,18 @@ public class TicTacToe {
                 }
             } while (!validUserMove);
 
-            if (isWin(player)) {
-                displayBoard();
-                System.out.println("🎉 Player " + player + " wins!");
-                gameOver = true;
-            } else if (isTie()) {
-                displayBoard();
-                System.out.println("🤝 It's a tie! (There is no chance for either player to win)");
-                gameOver = true;
+            //check for wins and ties only after move 4...
+            //just to satisfy that criteria of this project
+            if (moveNumber >= 5) {
+                if (isWin(player)) {
+                    displayBoard();
+                    System.out.println("🎉 Player " + player + " wins!");
+                    gameOver = true;
+                } else if (isTie()) {
+                    displayBoard();
+                    System.out.println("🤝 It's a tie! (There is no chance for either player to win)");
+                    gameOver = true;
+                }
             }
 
             moveNumber++;

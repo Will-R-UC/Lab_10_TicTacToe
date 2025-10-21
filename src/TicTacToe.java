@@ -55,12 +55,13 @@ public class TicTacToe {
 
     private static void initializeGame() {
         String player = "X";
-        int moveNumber = 0;
+        int moveNumber = 1; //1 indexed
         clearBoard();
 
         boolean gameOver = false;
         do {
-            if (moveNumber % 2 == 0) {
+            //moveNumber - 1 == moveNumber (zero indexed)
+            if ((moveNumber - 1) % 2 == 0) {
                 player = "X";
             } else {
                 player = "O";
@@ -81,6 +82,7 @@ public class TicTacToe {
                     System.out.println("\n⚠️ Invalid move. Please choose an empty square.\n");
                 }
             } while (!validUserMove);
+
 
             //check for wins and ties only after move 4...
             //just to satisfy that criteria of this project
